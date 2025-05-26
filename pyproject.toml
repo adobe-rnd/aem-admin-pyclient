@@ -10,12 +10,18 @@ readme = "README.md"
 authors = [
     {name = "AEM Admin Python Client Contributors", email = "admin@example.com"}
 ]
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
 requires-python = ">=3.8"
+keywords = ["aem", "admin", "api", "client", "adobe", "experience", "manager", "helix"]
+dependencies = [
+    "requests>=2.31.0",
+    "pydantic>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "urllib3>=2.0.0",
+]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
@@ -28,11 +34,20 @@ classifiers = [
     "Topic :: System :: Systems Administration",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "pytest-cov>=2.0",
+    "black>=21.0",
+    "flake8>=3.8",
+    "mypy>=0.800",
+]
+
 [project.urls]
-Homepage = "https://github.com/sdmcraft/aem-admin-pyclient"
-Documentation = "https://github.com/sdmcraft/aem-admin-pyclient/blob/main/docs/API_REFERENCE.md"
-Repository = "https://github.com/sdmcraft/aem-admin-pyclient"
-Issues = "https://github.com/sdmcraft/aem-admin-pyclient/issues"
+Homepage = "https://github.com/adobe-rnd/aem-admin-pyclient"
+Documentation = "https://github.com/adobe-rnd/aem-admin-pyclient/blob/main/docs/API_REFERENCE.md"
+Repository = "https://github.com/adobe-rnd/aem-admin-pyclient"
+Issues = "https://github.com/adobe-rnd/aem-admin-pyclient/issues"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
