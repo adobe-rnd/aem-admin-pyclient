@@ -201,13 +201,60 @@ Current test coverage: **61%** (751 statements, 295 missed)
 
 ## Building and Distribution
 
+### Building the Package
 ```bash
-# Build the package
-python setup.py sdist bdist_wheel
+# Clean previous builds
+rm -rf dist/*
 
-# Install locally
-pip install dist/aem-admin-client-1.0.0.tar.gz
+# Build the package
+python -m build
 ```
+
+### Distribution Methods
+
+1. **Install from Local Build**:
+   ```bash
+   pip install dist/aem-admin-client-12.74.3-py3-none-any.whl
+   ```
+
+2. **Install from GitHub**:
+   ```bash
+   # Latest version
+   pip install git+https://github.com/adobe-rnd/aem-admin-pyclient.git
+
+   # Specific version
+   pip install git+https://github.com/adobe-rnd/aem-admin-pyclient.git@v12.74.3
+   ```
+
+3. **Add to Requirements File**:
+   ```
+   aem-admin-client @ git+https://github.com/adobe-rnd/aem-admin-pyclient.git@v12.74.3
+   ```
+
+4. **Add to pyproject.toml**:
+   ```toml
+   dependencies = [
+       "aem-admin-client @ git+https://github.com/adobe-rnd/aem-admin-pyclient.git@v12.74.3",
+   ]
+   ```
+
+### Version Management
+
+1. **Update Version**:
+   - Edit `src/aem_admin_client/__init__.py`
+   - Update `__version__` variable
+
+2. **Create Release**:
+   ```bash
+   # Commit version change
+   git add src/aem_admin_client/__init__.py
+   git commit -m "chore: Update version to X.Y.Z"
+
+   # Create and push tag
+   git tag -a vX.Y.Z -m "Release version X.Y.Z"
+   git push origin main
+   git push origin vX.Y.Z
+   ```
 
 ## API Coverage
 
@@ -264,6 +311,12 @@ The client provides comprehensive error handling:
 - ✅ Improved mock objects with proper headers
 - ✅ All tests passing with comprehensive coverage reporting
 
+### Distribution Updates
+- ✅ GitHub-based installation support
+- ✅ Version-specific installation options
+- ✅ Modern Python packaging with pyproject.toml
+- ✅ Simplified development installation
+
 ## Future Enhancements
 
 Potential improvements:
@@ -277,3 +330,4 @@ Potential improvements:
 - [ ] Integration tests with real API
 - [ ] Performance benchmarking
 - [ ] Additional operation modules
+- [ ] PyPI distribution

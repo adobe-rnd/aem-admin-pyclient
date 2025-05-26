@@ -13,13 +13,39 @@ A comprehensive Python client library for the [AEM Admin API](https://www.aem.li
 
 ## Installation
 
+### From PyPI (Not Yet Available)
 ```bash
 pip install aem-admin-client
 ```
 
+### From GitHub
+You can install the package directly from GitHub in several ways:
+
+1. Latest version from main branch:
+```bash
+pip install git+https://github.com/adobe-rnd/aem-admin-pyclient.git
+```
+
+2. Specific version (e.g., 12.74.3):
+```bash
+pip install git+https://github.com/adobe-rnd/aem-admin-pyclient.git@v12.74.3
+```
+
+3. Add to requirements.txt:
+```
+aem-admin-client @ git+https://github.com/adobe-rnd/aem-admin-pyclient.git@v12.74.3
+```
+
+4. Add to pyproject.toml:
+```toml
+dependencies = [
+    "aem-admin-client @ git+https://github.com/adobe-rnd/aem-admin-pyclient.git@v12.74.3",
+]
+```
+
 For development:
 ```bash
-pip install aem-admin-client[dev]
+pip install -e .[dev]
 ```
 
 ## Quick Start
@@ -107,23 +133,7 @@ except AEMAdminError as e:
 
 ## Development
 
-```bash
-# Clone the repository
-git clone <repository-url>
-cd aem-admin-pyclient
-
-# Install development dependencies
-pip install -e .[dev]
-
-# Run tests
-pytest
-
-# Format code
-black .
-
-# Type checking
-mypy aem_admin_client
-```
+See [DEVELOPMENT.md](DEVELOPMENT.md) for detailed development instructions.
 
 ## License
 
