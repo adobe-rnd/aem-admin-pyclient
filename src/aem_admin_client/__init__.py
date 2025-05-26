@@ -26,7 +26,7 @@ from .exceptions import (
     ServerError,
 )
 
-__version__ = "1.0.0"
+__version__ = "12.74.3"
 __all__ = [
     "AEMAdminClient",
     "Config",
