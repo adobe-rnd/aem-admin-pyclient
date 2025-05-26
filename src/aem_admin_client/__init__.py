@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""AEM Admin Python Client.
-
-A comprehensive Python client library for the AEM Admin API.
+"""
+AEM Admin Python Client - A comprehensive Python client library for the AEM Admin API.
 """
 
 from .client import AEMAdminClient

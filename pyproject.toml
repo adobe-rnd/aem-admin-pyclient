@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aem-admin-client"
+dynamic = ["version"]
+description = "A comprehensive Python client library for the AEM Admin API"
+readme = "README.md"
+authors = [
+    {name = "AEM Admin Python Client Contributors", email = "admin@example.com"}
+]
+license = {text = "Apache-2.0"}
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Systems Administration",
+]
+
+[project.urls]
+Homepage = "https://github.com/sdmcraft/aem-admin-pyclient"
+Documentation = "https://github.com/sdmcraft/aem-admin-pyclient/blob/main/docs/API_REFERENCE.md"
+Repository = "https://github.com/sdmcraft/aem-admin-pyclient"
+Issues = "https://github.com/sdmcraft/aem-admin-pyclient/issues"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.dynamic]
+version = {attr = "aem_admin_client.__version__"}
+
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.mypy]
+python_version = "3.8"
+strict = true
+ignore_missing_imports = true

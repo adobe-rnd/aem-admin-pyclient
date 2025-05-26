@@ -8,13 +8,14 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 
 setup(
     name="aem-admin-client",
-    version="1.0.0",
-    author="AEM Admin Python Client Contributors",
-    author_email="admin@example.com",
+    version="12.74.3",
+    author="Satya Deep Maheshwari",
+    author_email="satyam@adobe.com",
     description="A comprehensive Python client library for the AEM Admin API",
-    long_description=long_description,
+    long_description="A comprehensive Python client library for the AEM Admin API. "
+    "This client is used to manage the lifecycle of content and code.",
     long_description_content_type="text/markdown",
-    url="https://github.com/example/aem-admin-client",
+    url="https://github.com/adobe-rnd/aem-admin-pyclient",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     classifiers=[
@@ -46,8 +47,8 @@ setup(
     license="Apache-2.0",
     keywords="aem admin api client adobe experience manager helix",
     project_urls={
-        "Bug Reports": "https://github.com/example/aem-admin-client/issues",
-        "Source": "https://github.com/example/aem-admin-client",
-        "Documentation": "https://github.com/example/aem-admin-client/blob/main/docs/API_REFERENCE.md",
+        "Bug Reports": "https://github.com/adobe-rnd/aem-admin-pyclient/issues",
+        "Source": "https://github.com/adobe-rnd/aem-admin-pyclient",
+        "Documentation": "https://github.com/adobe-rnd/aem-admin-pyclient/blob/main/README.md",
     },
 )
