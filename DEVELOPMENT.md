@@ -113,16 +113,63 @@ pytest -s --log-cli-level=DEBUG
 pytest -x
 ```
 
-## Code Style
+## Code Style and Linting
 
-The project follows Python best practices:
+The project uses several tools to ensure code quality:
 
-- **Type hints**: All functions have proper type annotations
-- **Docstrings**: All public methods have comprehensive docstrings
-- **Error handling**: Specific exceptions for different error conditions
-- **Modular design**: Organized into logical operation modules
-- **Environment configuration**: Support for environment variables
-- **Debug logging**: Comprehensive HTTP request/response logging
+- **black**: Code formatting
+- **isort**: Import sorting
+- **flake8**: Code linting with additional plugins:
+  - `flake8-docstrings`: Docstring style checking
+  - `flake8-bugbear`: Additional bug checks
+  - `flake8-comprehensions`: List/set/dict comprehension checks
+  - `flake8-simplify`: Code simplification suggestions
+- **mypy**: Static type checking
+
+### Running Linting Checks
+
+Use the provided script to run all linting checks:
+```bash
+./scripts/lint.sh
+```
+
+This will run:
+1. `isort` to check import sorting
+2. `black` to check code formatting
+3. `flake8` to check code style and quality
+4. `mypy` to check type hints
+
+### Auto-formatting Code
+
+To automatically fix formatting issues:
+```bash
+./scripts/format.sh
+```
+
+This will:
+1. Sort imports using `isort`
+2. Format code using `black`
+
+### Configuration
+
+- **black**: Configured in `pyproject.toml` with 88-character line length
+- **isort**: Configured in `pyproject.toml` to be compatible with black
+- **flake8**: Configured in `.flake8` with custom rules and ignores
+- **mypy**: Configured in `pyproject.toml` with strict type checking
+
+### Pre-commit Checks
+
+It's recommended to run linting before committing changes:
+```bash
+# Check code style
+./scripts/lint.sh
+
+# Fix formatting issues
+./scripts/format.sh
+
+# Run tests
+pytest
+```
 
 ## Authentication
 

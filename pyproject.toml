@@ -38,9 +38,16 @@ classifiers = [
 dev = [
     "pytest>=6.0",
     "pytest-cov>=2.0",
-    "black>=21.0",
-    "flake8>=3.8",
-    "mypy>=0.800",
+    "black>=23.0",
+    "flake8>=6.0",
+    "flake8-docstrings>=1.7",
+    "flake8-bugbear>=23.0",
+    "flake8-comprehensions>=3.14",
+    "flake8-simplify>=0.21",
+    "isort>=5.12",
+    "mypy>=1.0",
+    "types-requests>=2.31",
+    "types-python-dateutil>=2.8",
 ]
 
 [project.urls]
@@ -58,12 +65,34 @@ version = {attr = "aem_admin_client.__version__"}
 [tool.black]
 line-length = 88
 target-version = ["py38"]
+include = '\.pyi?$'
+extend-exclude = '''
+# A regex preceded with ^/ will apply only to files and directories
+# in the root of the project.
+^/docs/
+'''
 
 [tool.isort]
 profile = "black"
 multi_line_output = 3
+line_length = 88
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+skip = ["docs"]
 
 [tool.mypy]
 python_version = "3.8"
 strict = true
 ignore_missing_imports = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+warn_unreachable = true
+show_error_codes = true
