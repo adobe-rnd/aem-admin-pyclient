@@ -1,18 +1,21 @@
 """Pydantic models for AEM Admin API data structures."""
 
 from datetime import datetime
-from typing import List, Optional, Dict, Any, Union
-from pydantic import BaseModel, Field, HttpUrl, field_validator
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field, field_validator
 
 
 class ResourceInfo(BaseModel):
     """Basic resource information."""
+
     web_path: str = Field(alias="webPath")
     resource_path: str = Field(alias="resourcePath")
 
 
 class LiveInfo(BaseModel):
     """Live/published resource information."""
+
     status: int
     url: Optional[str] = None
     last_modified: Optional[datetime] = Field(None, alias="lastModified")
@@ -20,9 +23,9 @@ class LiveInfo(BaseModel):
     content_bus_id: Optional[str] = Field(None, alias="contentBusId")
     permissions: List[str] = []
 
-    @field_validator('last_modified', mode='before')
+    @field_validator("last_modified", mode="before")
     @classmethod
-    def parse_datetime(cls, v):
+    def parse_datetime(cls, v: Any) -> Optional[datetime]:
         """Parse RFC 2822 datetime format."""
         if isinstance(v, str):
             try:
@@ -31,12 +34,13 @@ class LiveInfo(BaseModel):
             except (ValueError, TypeError):
                 # Fallback to ISO format parsing
                 from datetime import datetime
-                return datetime.fromisoformat(v.replace('Z', '+00:00'))
-        return v
+                return datetime.fromisoformat(v.replace("Z", "+00:00"))
+        return None if v is None else v
 
 
 class PreviewInfo(BaseModel):
     """Preview resource information."""
+
     status: int
     url: Optional[str] = None
     last_modified: Optional[datetime] = Field(None, alias="lastModified")
@@ -44,9 +48,9 @@ class PreviewInfo(BaseModel):
     content_bus_id: Optional[str] = Field(None, alias="contentBusId")
     permissions: List[str] = []
 
-    @field_validator('last_modified', mode='before')
+    @field_validator("last_modified", mode="before")
     @classmethod
-    def parse_datetime(cls, v):
+    def parse_datetime(cls, v: Any) -> Optional[datetime]:
         """Parse RFC 2822 datetime format."""
         if isinstance(v, str):
             try:
@@ -55,20 +59,21 @@ class PreviewInfo(BaseModel):
             except (ValueError, TypeError):
                 # Fallback to ISO format parsing
                 from datetime import datetime
-                return datetime.fromisoformat(v.replace('Z', '+00:00'))
-        return v
+                return datetime.fromisoformat(v.replace("Z", "+00:00"))
+        return None if v is None else v
 
 
 class EditInfo(BaseModel):
     """Edit/source resource information."""
+
     status: Optional[int] = None  # Make status optional to handle empty edit objects
     url: Optional[str] = None
     source_location: Optional[str] = Field(None, alias="sourceLocation")
     last_modified: Optional[datetime] = Field(None, alias="lastModified")
 
-    @field_validator('last_modified', mode='before')
+    @field_validator("last_modified", mode="before")
     @classmethod
-    def parse_datetime(cls, v):
+    def parse_datetime(cls, v: Any) -> Optional[datetime]:
         """Parse RFC 2822 datetime format."""
         if isinstance(v, str):
             try:
@@ -77,12 +82,13 @@ class EditInfo(BaseModel):
             except (ValueError, TypeError):
                 # Fallback to ISO format parsing
                 from datetime import datetime
-                return datetime.fromisoformat(v.replace('Z', '+00:00'))
-        return v
+                return datetime.fromisoformat(v.replace("Z", "+00:00"))
+        return None if v is None else v
 
 
 class CodeInfo(BaseModel):
     """Code resource information."""
+
     status: int
     code_bus_id: Optional[str] = Field(None, alias="codeBusId")
     permissions: List[str] = []
@@ -90,6 +96,7 @@ class CodeInfo(BaseModel):
 
 class ResourceLinksInfo(BaseModel):
     """Resource links information."""
+
     status: Optional[str] = None
     preview: Optional[str] = None
     live: Optional[str] = None
@@ -98,11 +105,13 @@ class ResourceLinksInfo(BaseModel):
 
 class ProfileInfo(BaseModel):
     """Profile information."""
+
     name: Optional[str] = None
 
 
 class StatusResponse(ResourceInfo):
     """Complete status response."""
+
     live: Optional[LiveInfo] = None
     preview: Optional[PreviewInfo] = None
     edit: Optional[EditInfo] = None
@@ -112,19 +121,24 @@ class StatusResponse(ResourceInfo):
 
 
 class BulkStatusPath(BaseModel):
-    """Path specification for bulk status operations."""
-    path: Optional[str] = None
-    prefix: Optional[str] = None
+    """Model representing a path for bulk status operations."""
+
+    path: str = Field(..., description="Path to check status for")
+    type: str = Field(..., description="Type of status check")
 
 
 class BulkStatusRequest(BaseModel):
-    """Request body for bulk status operations."""
-    paths: List[BulkStatusPath]
-    select: Optional[List[str]] = None
+    """Model representing a bulk status request."""
+
+    paths: List[BulkStatusPath] = Field(
+        ...,
+        description="List of paths to check status for"
+    )
 
 
 class JobInfo(BaseModel):
     """Job information."""
+
     topic: str
     name: str
     state: str
@@ -134,9 +148,9 @@ class JobInfo(BaseModel):
     progress: Optional[Dict[str, Any]] = None
     result: Optional[Dict[str, Any]] = None
 
-    @field_validator('start_time', 'end_time', mode='before')
+    @field_validator("start_time", "end_time", mode="before")
     @classmethod
-    def parse_datetime(cls, v):
+    def parse_datetime(cls, v: Any) -> Optional[datetime]:
         """Parse RFC 2822 datetime format."""
         if isinstance(v, str):
             try:
@@ -145,12 +159,13 @@ class JobInfo(BaseModel):
             except (ValueError, TypeError):
                 # Fallback to ISO format parsing
                 from datetime import datetime
-                return datetime.fromisoformat(v.replace('Z', '+00:00'))
-        return v
+                return datetime.fromisoformat(v.replace("Z", "+00:00"))
+        return None if v is None else v
 
 
 class JobCreated(BaseModel):
     """Job creation response."""
+
     status: int
     message_id: str = Field(alias="messageId")
     job: JobInfo
@@ -158,24 +173,27 @@ class JobCreated(BaseModel):
 
 class JobLinksInfo(BaseModel):
     """Job links information."""
+
     self: Optional[str] = None
     list: Optional[str] = None
 
 
 class JobResponse(JobCreated):
     """Complete job response."""
+
     links: Optional[JobLinksInfo] = None
 
 
 class PublishRequest(BaseModel):
-    """Request body for publish operations."""
-    paths: Optional[List[str]] = None
-    force_update_redirects: Optional[bool] = Field(None, alias="forceUpdateRedirects")
-    disable_notifications: Optional[bool] = Field(None, alias="disableNotifications")
+    """Model representing a publish request."""
+
+    paths: List[str] = Field(..., description="List of paths to publish")
+    type: str = Field(..., description="Type of publish operation")
 
 
 class PreviewRequest(BaseModel):
     """Request body for preview operations."""
+
     paths: Optional[List[str]] = None
     word2md_version: Optional[str] = Field(None, alias="hlx-word2md-version")
     gdocs2md_version: Optional[str] = Field(None, alias="hlx-gdocs2md-version")
@@ -183,37 +201,37 @@ class PreviewRequest(BaseModel):
 
 
 class CacheInfo(BaseModel):
-    """Cache information."""
-    status: int
-    url: Optional[str] = None
-    last_modified: Optional[datetime] = Field(None, alias="lastModified")
-    cache_control: Optional[str] = Field(None, alias="cacheControl")
-    surrogate_key: Optional[str] = Field(None, alias="surrogateKey")
+    """Model representing cache information."""
 
-    @field_validator('last_modified', mode='before')
-    @classmethod
-    def parse_datetime(cls, v):
-        """Parse RFC 2822 datetime format."""
-        if isinstance(v, str):
-            try:
-                from email.utils import parsedate_to_datetime
-                return parsedate_to_datetime(v)
-            except (ValueError, TypeError):
-                # Fallback to ISO format parsing
-                from datetime import datetime
-                return datetime.fromisoformat(v.replace('Z', '+00:00'))
-        return v
+    class Config:
+        """Pydantic configuration for the CacheInfo model.
+
+        Defines example data and schema customization.
+        """
+
+        json_schema_extra = {
+            "example": {
+                "path": "/content/example",
+                "status": "cleared",
+                "timestamp": "2023-01-01T00:00:00Z",
+            }
+        }
+
+    path: str = Field(..., description="Path of the cached content")
+    status: str = Field(..., description="Status of the cache operation")
+    timestamp: datetime = Field(..., description="Timestamp of the cache operation")
 
 
 class IndexInfo(BaseModel):
     """Index information."""
+
     status: int
     url: Optional[str] = None
     last_modified: Optional[datetime] = Field(None, alias="lastModified")
 
-    @field_validator('last_modified', mode='before')
+    @field_validator("last_modified", mode="before")
     @classmethod
-    def parse_datetime(cls, v):
+    def parse_datetime(cls, v: Any) -> Optional[datetime]:
         """Parse RFC 2822 datetime format."""
         if isinstance(v, str):
             try:
@@ -222,21 +240,22 @@ class IndexInfo(BaseModel):
             except (ValueError, TypeError):
                 # Fallback to ISO format parsing
                 from datetime import datetime
-                return datetime.fromisoformat(v.replace('Z', '+00:00'))
-        return v
+                return datetime.fromisoformat(v.replace("Z", "+00:00"))
+        return None if v is None else v
 
 
 class LogEntry(BaseModel):
     """Log entry."""
+
     timestamp: datetime
     level: str
     message: str
     source: Optional[str] = None
     request_id: Optional[str] = Field(None, alias="requestId")
 
-    @field_validator('timestamp', mode='before')
+    @field_validator("timestamp", mode="before")
     @classmethod
-    def parse_datetime(cls, v):
+    def parse_datetime(cls, v: Any) -> Optional[datetime]:
         """Parse RFC 2822 datetime format."""
         if isinstance(v, str):
             try:
@@ -245,26 +264,34 @@ class LogEntry(BaseModel):
             except (ValueError, TypeError):
                 # Fallback to ISO format parsing
                 from datetime import datetime
-                return datetime.fromisoformat(v.replace('Z', '+00:00'))
-        return v
+                return datetime.fromisoformat(v.replace("Z", "+00:00"))
+        return None if v is None else v
 
 
 class LogResponse(BaseModel):
     """Log response."""
+
     logs: List[LogEntry] = Field(default_factory=list)  # Always a list, never None
     next_token: Optional[str] = Field(None, alias="nextToken")
-    from_time: Optional[str] = Field(None, alias="from")  # Add fields that appear in actual response
+    from_time: Optional[str] = Field(
+        None,
+        alias="from"
+    )  # Add fields that appear in actual response
     to_time: Optional[str] = Field(None, alias="to")
     blocks: Optional[str] = None
     ref: Optional[str] = None
 
-    # Allow extra fields that might be in the response
     class Config:
+        """Pydantic configuration for the LogResponse model.
+
+        Allows extra fields in the response data.
+        """
         extra = "allow"
 
 
 class SnapshotInfo(BaseModel):
     """Snapshot information."""
+
     id: str
     name: Optional[str] = None
     description: Optional[str] = None
@@ -274,9 +301,9 @@ class SnapshotInfo(BaseModel):
     filter: Optional[str] = None
     paths: List[str] = []
 
-    @field_validator('created', mode='before')
+    @field_validator("created", mode="before")
     @classmethod
-    def parse_datetime(cls, v):
+    def parse_datetime(cls, v: Any) -> Optional[datetime]:
         """Parse RFC 2822 datetime format."""
         if isinstance(v, str):
             try:
@@ -285,12 +312,13 @@ class SnapshotInfo(BaseModel):
             except (ValueError, TypeError):
                 # Fallback to ISO format parsing
                 from datetime import datetime
-                return datetime.fromisoformat(v.replace('Z', '+00:00'))
-        return v
+                return datetime.fromisoformat(v.replace("Z", "+00:00"))
+        return None if v is None else v
 
 
 class SnapshotRequest(BaseModel):
     """Request body for snapshot operations."""
+
     name: Optional[str] = None
     description: Optional[str] = None
     paths: Optional[List[str]] = None
@@ -299,12 +327,13 @@ class SnapshotRequest(BaseModel):
 
 class ConfigResponse(BaseModel):
     """Generic configuration response."""
+
     data: Dict[str, Any]
     last_modified: Optional[datetime] = Field(None, alias="lastModified")
 
-    @field_validator('last_modified', mode='before')
+    @field_validator("last_modified", mode="before")
     @classmethod
-    def parse_datetime(cls, v):
+    def parse_datetime(cls, v: Any) -> Optional[datetime]:
         """Parse RFC 2822 datetime format."""
         if isinstance(v, str):
             try:
@@ -313,12 +342,13 @@ class ConfigResponse(BaseModel):
             except (ValueError, TypeError):
                 # Fallback to ISO format parsing
                 from datetime import datetime
-                return datetime.fromisoformat(v.replace('Z', '+00:00'))
-        return v
+                return datetime.fromisoformat(v.replace("Z", "+00:00"))
+        return None if v is None else v
 
 
 class SiteConfig(BaseModel):
     """Site configuration."""
+
     host: Optional[str] = None
     content: Optional[Dict[str, Any]] = None
     code: Optional[Dict[str, Any]] = None
@@ -327,6 +357,7 @@ class SiteConfig(BaseModel):
 
 class OrgConfig(BaseModel):
     """Organization configuration."""
+
     name: str
     sites: Optional[List[str]] = None
     groups: Optional[Dict[str, Any]] = None
@@ -334,6 +365,7 @@ class OrgConfig(BaseModel):
 
 class ProfileConfig(BaseModel):
     """Profile configuration."""
+
     name: str
     content: Optional[Dict[str, Any]] = None
     code: Optional[Dict[str, Any]] = None

@@ -14,20 +14,20 @@
 
 """Main AEM Admin Client."""
 
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from .base import BaseClient
 from .operations import (
-    StatusOperations,
-    PublishOperations,
-    PreviewOperations,
-    CodeOperations,
     CacheOperations,
+    CodeOperations,
+    ConfigOperations,
     IndexOperations,
     JobOperations,
     LogOperations,
+    PreviewOperations,
+    PublishOperations,
     SnapshotOperations,
-    ConfigOperations,
+    StatusOperations,
 )
 
 
@@ -45,20 +45,18 @@ class AEMAdminClient:
 
     def __init__(
         self,
-        base_url: str = "https://admin.hlx.page",
+        base_url: Optional[str] = None,
         auth_token: Optional[str] = None,
         auth_cookie: Optional[str] = None,
-        timeout: int = 30,
-        max_retries: int = 3,
-    ):
+        debug: bool = False,
+    ) -> None:
         """Initialize the AEM Admin client.
 
         Args:
             base_url: Base URL for the AEM Admin API
             auth_token: Bearer token for authentication
             auth_cookie: Auth cookie for authentication
-            timeout: Request timeout in seconds
-            max_retries: Maximum number of retries for failed requests
+            debug: Enable debug logging
 
         Raises:
             ValueError: If neither auth_token nor auth_cookie is provided
@@ -67,35 +65,62 @@ class AEMAdminClient:
             raise ValueError("Either auth_token or auth_cookie must be provided")
 
         # Initialize base HTTP client
-        self._client = BaseClient(
+        self.client = BaseClient(
             base_url=base_url,
             auth_token=auth_token,
             auth_cookie=auth_cookie,
-            timeout=timeout,
-            max_retries=max_retries,
+            debug=debug,
         )
 
         # Initialize operation modules
-        self.status = StatusOperations(self._client)
-        self.publish = PublishOperations(self._client)
-        self.preview = PreviewOperations(self._client)
-        self.code = CodeOperations(self._client)
-        self.cache = CacheOperations(self._client)
-        self.index = IndexOperations(self._client)
-        self.job = JobOperations(self._client)
-        self.log = LogOperations(self._client)
-        self.snapshot = SnapshotOperations(self._client)
-        self.config = ConfigOperations(self._client)
+        self.status = StatusOperations(self.client)
+        self.publish = PublishOperations(self.client)
+        self.preview = PreviewOperations(self.client)
+        self.code = CodeOperations(self.client)
+        self.cache = CacheOperations(self.client)
+        self.index = IndexOperations(self.client)
+        self.job = JobOperations(self.client)
+        self.log = LogOperations(self.client)
+        self.snapshot = SnapshotOperations(self.client)
+        self.config = ConfigOperations(self.client)
 
-    def close(self):
+    def request(
+        self,
+        method: str,
+        endpoint: str,
+        params: Optional[Dict[str, Any]] = None,
+        data: Optional[Dict[str, Any]] = None,
+        headers: Optional[Dict[str, str]] = None,
+    ) -> Dict[str, Any]:
+        """Make a direct request to the API.
+
+        Args:
+            method: HTTP method
+            endpoint: API endpoint
+            params: Query parameters
+            data: Request body
+            headers: Request headers
+
+        Returns:
+            API response data
+        """
+        return self.client.request(
+            method=method,
+            endpoint=endpoint,
+            params=params,
+            data=data,
+            headers=headers,
+        )
+
+    def close(self) -> None:
         """Close the HTTP session."""
-        if hasattr(self._client, 'session'):
-            self._client.session.close()
+        if hasattr(self.client, "session"):
+            self.client.session.close()
 
-    def __enter__(self):
+    def __enter__(self) -> "AEMAdminClient":
         """Context manager entry."""
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         """Context manager exit."""
         self.close()

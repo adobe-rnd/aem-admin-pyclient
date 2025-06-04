@@ -1,8 +1,9 @@
 """Status operations for AEM Admin API."""
 
-from typing import Optional, List
+from typing import Optional
+
 from ..base import BaseClient
-from ..models import StatusResponse, BulkStatusRequest, JobResponse
+from ..models import BulkStatusRequest, JobResponse, StatusResponse
 
 
 class StatusOperations:
@@ -67,7 +68,6 @@ class StatusOperations:
         api_path = f"/status/{org}/{site}/{ref}/*"
 
         response_data = self.client.post(
-            api_path,
-            data=request.dict(by_alias=True, exclude_none=True)
+            api_path, data=request.dict(by_alias=True, exclude_none=True)
         )
         return JobResponse(**response_data)

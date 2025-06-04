@@ -1,8 +1,12 @@
-"""Configuration management for AEM Admin Client."""
+"""Configuration module for AEM Admin Client."""
 
 import os
-from typing import Optional
+from typing import Any, TYPE_CHECKING, Optional
+
 from dotenv import load_dotenv
+
+if TYPE_CHECKING:
+    from .client import AEMAdminClient
 
 # Load environment variables from .env file
 load_dotenv()
@@ -42,31 +46,22 @@ class Config:
         return os.getenv("AEM_DEFAULT_SITE")
 
     @staticmethod
-    def get_log_level() -> str:
+    def get_log_level() -> int:
         """Get log level from environment."""
-        return os.getenv("LOG_LEVEL", "INFO").upper()
+        import logging
+        level_str = os.getenv("LOG_LEVEL", "INFO").upper()
+        return getattr(logging, level_str, logging.INFO)
 
 
-def get_client_from_env(**kwargs):
-    """
-    Create an AEMAdminClient instance using environment variables.
-
-    Args:
-        **kwargs: Additional arguments to override environment settings
-
-    Returns:
-        AEMAdminClient: Configured client instance
-
-    Raises:
-        ValueError: If no authentication method is provided
-    """
+def get_client_from_env(**kwargs: Any) -> "AEMAdminClient":
+    """Create an AEMAdminClient instance using environment variables."""
     from .client import AEMAdminClient
 
     # Get values from environment, allow kwargs to override
     auth_token = kwargs.get("auth_token") or Config.get_auth_token()
     auth_cookie = kwargs.get("auth_cookie") or Config.get_auth_cookie()
     base_url = kwargs.get("base_url") or Config.get_base_url()
-    timeout = kwargs.get("timeout") or Config.get_timeout()
+    debug = kwargs.get("debug", False)
 
     if not auth_token and not auth_cookie:
         raise ValueError(
@@ -78,7 +73,10 @@ def get_client_from_env(**kwargs):
         base_url=base_url,
         auth_token=auth_token,
         auth_cookie=auth_cookie,
-        timeout=timeout,
-        **{k: v for k, v in kwargs.items()
-           if k not in ["auth_token", "auth_cookie", "base_url", "timeout"]}
+        debug=debug,
+        **{
+            k: v
+            for k, v in kwargs.items()
+            if k not in ["auth_token", "auth_cookie", "base_url", "debug"]
+        },
     )

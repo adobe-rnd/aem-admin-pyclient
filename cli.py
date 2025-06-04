@@ -31,14 +31,16 @@ def get_client(args) -> AEMAdminClient:
     auth_cookie = args.cookie or os.getenv("AEM_AUTH_COOKIE")
 
     if not auth_token and not auth_cookie:
-        print("Error: Either --token or --cookie must be provided, or set AEM_AUTH_TOKEN/AEM_AUTH_COOKIE environment variable")
+        print(
+            "Error: Either --token or --cookie must be provided, or set AEM_AUTH_TOKEN/AEM_AUTH_COOKIE environment variable"
+        )
         sys.exit(1)
 
     return AEMAdminClient(
         base_url=args.base_url,
         auth_token=auth_token,
         auth_cookie=auth_cookie,
-        timeout=args.timeout
+        timeout=args.timeout,
     )
 
 
@@ -59,7 +61,9 @@ def cmd_publish(args):
     """Publish a resource."""
     client = get_client(args)
     try:
-        result = client.publish.publish_resource(args.org, args.site, args.ref, args.path)
+        result = client.publish.publish_resource(
+            args.org, args.site, args.ref, args.path
+        )
         print(json.dumps(result, indent=2, default=str))
     except AEMAdminError as e:
         print(f"Error: {e}")
@@ -72,7 +76,9 @@ def cmd_preview(args):
     """Preview a resource."""
     client = get_client(args)
     try:
-        result = client.preview.preview_resource(args.org, args.site, args.ref, args.path)
+        result = client.preview.preview_resource(
+            args.org, args.site, args.ref, args.path
+        )
         print(json.dumps(result, indent=2, default=str))
     except AEMAdminError as e:
         print(f"Error: {e}")
@@ -112,10 +118,17 @@ def main():
     parser = argparse.ArgumentParser(description="AEM Admin CLI Tool")
 
     # Global arguments
-    parser.add_argument("--base-url", default=Config.get_base_url(), help="Base URL for AEM Admin API")
+    parser.add_argument(
+        "--base-url", default=Config.get_base_url(), help="Base URL for AEM Admin API"
+    )
     parser.add_argument("--token", help="Bearer token for authentication")
     parser.add_argument("--cookie", help="Auth cookie for authentication")
-    parser.add_argument("--timeout", type=int, default=Config.get_timeout(), help="Request timeout in seconds")
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=Config.get_timeout(),
+        help="Request timeout in seconds",
+    )
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
@@ -148,7 +161,9 @@ def main():
     logs_parser.add_argument("org", help="Organization name")
     logs_parser.add_argument("site", help="Site ID")
     logs_parser.add_argument("ref", help="Repository reference")
-    logs_parser.add_argument("--since", default="1h", help="Time span (e.g., 5m, 1h, 1d)")
+    logs_parser.add_argument(
+        "--since", default="1h", help="Time span (e.g., 5m, 1h, 1d)"
+    )
     logs_parser.set_defaults(func=cmd_logs)
 
     # Jobs command

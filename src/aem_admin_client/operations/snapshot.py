@@ -1,6 +1,7 @@
 """Snapshot operations for AEM Admin API."""
 
-from typing import Optional, List, Dict, Any
+from typing import Any, Dict, List, Optional
+
 from ..base import BaseClient
 from ..models import SnapshotInfo, SnapshotRequest
 
@@ -35,7 +36,9 @@ class SnapshotOperations:
         api_path = f"/snapshot/{org}/{site}/{ref}"
 
         response_data = self.client.get(api_path)
-        return [SnapshotInfo(**snapshot) for snapshot in response_data.get("snapshots", [])]
+        return [
+            SnapshotInfo(**snapshot) for snapshot in response_data.get("snapshots", [])
+        ]
 
     def create_snapshot(
         self,
@@ -68,9 +71,7 @@ class SnapshotOperations:
             params["publish"] = "true"
 
         response_data = self.client.post(
-            api_path,
-            data=request.dict(by_alias=True, exclude_none=True),
-            params=params
+            api_path, data=request.dict(by_alias=True, exclude_none=True), params=params
         )
         return SnapshotInfo(**response_data)
 

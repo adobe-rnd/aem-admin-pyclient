@@ -1,6 +1,6 @@
 """Custom exceptions for AEM Admin Client."""
 
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
 
 class AEMAdminError(Exception):
@@ -20,34 +20,41 @@ class AEMAdminError(Exception):
 
 class AuthenticationError(AEMAdminError):
     """Raised when authentication fails (401)."""
+
     pass
 
 
 class AuthorizationError(AEMAdminError):
     """Raised when authorization fails (403)."""
+
     pass
 
 
 class NotFoundError(AEMAdminError):
     """Raised when a resource is not found (404)."""
+
     pass
 
 
 class ConflictError(AEMAdminError):
     """Raised when there's a conflict (409)."""
+
     pass
 
 
 class RateLimitError(AEMAdminError):
     """Raised when rate limit is exceeded (429)."""
+
     pass
 
 
 class ServerError(AEMAdminError):
     """Raised when server error occurs (5xx)."""
+
     pass
 
 
 class ValidationError(AEMAdminError):
     """Raised when request validation fails."""
+
     pass

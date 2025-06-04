@@ -1,6 +1,7 @@
 """Log operations for AEM Admin API."""
 
-from typing import Optional, Dict, Any
+from typing import Optional
+
 from ..base import BaseClient
 from ..models import LogResponse
 

@@ -1,8 +1,9 @@
 """Job operations for AEM Admin API."""
 
-from typing import Optional, List, Dict, Any
+from typing import Any, Dict, List
+
 from ..base import BaseClient
-from ..models import JobInfo, JobResponse
+from ..models import JobInfo
 
 
 class JobOperations:

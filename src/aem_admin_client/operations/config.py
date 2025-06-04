@@ -1,8 +1,9 @@
 """Configuration operations for AEM Admin API."""
 
-from typing import Optional, List, Dict, Any
+from typing import Any, Dict
+
 from ..base import BaseClient
-from ..models import ConfigResponse, SiteConfig, OrgConfig, ProfileConfig
+from ..models import ConfigResponse, OrgConfig, ProfileConfig, SiteConfig
 
 
 class ConfigOperations:
@@ -44,8 +45,7 @@ class ConfigOperations:
         api_path = f"/config/{org}.json"
 
         response_data = self.client.put(
-            api_path,
-            data=config.dict(by_alias=True, exclude_none=True)
+            api_path, data=config.dict(by_alias=True, exclude_none=True)
         )
         return OrgConfig(**response_data)
 
@@ -79,8 +79,7 @@ class ConfigOperations:
         api_path = f"/config/{org}/sites/{site}.json"
 
         response_data = self.client.put(
-            api_path,
-            data=config.dict(by_alias=True, exclude_none=True)
+            api_path, data=config.dict(by_alias=True, exclude_none=True)
         )
         return SiteConfig(**response_data)
 
@@ -115,10 +114,7 @@ class ConfigOperations:
         return ProfileConfig(**response_data)
 
     def update_profile_config(
-        self,
-        org: str,
-        profile: str,
-        config: ProfileConfig
+        self, org: str, profile: str, config: ProfileConfig
     ) -> ProfileConfig:
         """Update profile configuration.
 
@@ -133,8 +129,7 @@ class ConfigOperations:
         api_path = f"/config/{org}/profiles/{profile}.json"
 
         response_data = self.client.put(
-            api_path,
-            data=config.dict(by_alias=True, exclude_none=True)
+            api_path, data=config.dict(by_alias=True, exclude_none=True)
         )
         return ProfileConfig(**response_data)
 

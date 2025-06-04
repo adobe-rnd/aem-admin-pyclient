@@ -1,20 +1,17 @@
 #!/usr/bin/env python3
-"""Basic usage examples for AEM Admin Python Client."""
+"""Example script demonstrating basic usage of the AEM Admin Client."""
 
 import os
+
 from aem_admin_client import AEMAdminClient
-from aem_admin_client.models import BulkStatusRequest, BulkStatusPath, PublishRequest
 
 
 def main():
-    """Demonstrate basic usage of the AEM Admin client."""
-
-    # Initialize client with authentication
-    # You can use either auth_token or auth_cookie
+    """Run the example script."""
+    # Create client instance
     client = AEMAdminClient(
-        base_url="https://admin.hlx.page",
-        auth_token=os.getenv("AEM_AUTH_TOKEN"),  # or use auth_cookie
-        timeout=30
+        base_url=os.getenv("AEM_ADMIN_BASE_URL"),
+        auth_token=os.getenv("AEM_ADMIN_AUTH_TOKEN"),
     )
 
     # Example organization, site, and reference

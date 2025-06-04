@@ -1,7 +1,9 @@
 """Unit tests for AEM Admin Client."""
 
-import pytest
 from unittest.mock import Mock, patch
+
+import pytest
+
 from aem_admin_client import AEMAdminClient
 from aem_admin_client.exceptions import AuthenticationError, ValidationError
 
@@ -13,16 +15,18 @@ class TestAEMAdminClient:
         """Test client initialization with auth token."""
         client = AEMAdminClient(auth_token="test-token")
         # Auth token is now stored as a cookie, not header
-        assert client._client.session.cookies.get("auth_token") == "test-token"
+        assert client.client.session.cookies.get("auth_token") == "test-token"
 
     def test_client_initialization_with_cookie(self):
         """Test client initialization with auth cookie."""
         client = AEMAdminClient(auth_cookie="test-cookie")
-        assert client._client.session.cookies.get("auth_token") == "test-cookie"
+        assert client.client.session.cookies.get("auth_token") == "test-cookie"
 
     def test_client_initialization_without_auth(self):
         """Test client initialization without authentication raises error."""
-        with pytest.raises(ValueError, match="Either auth_token or auth_cookie must be provided"):
+        with pytest.raises(
+            ValueError, match="Either auth_token or auth_cookie must be provided"
+        ):
             AEMAdminClient()
 
     def test_client_has_all_operations(self):
@@ -46,8 +50,8 @@ class TestAEMAdminClient:
             assert client is not None
         # Should not raise any exceptions
 
-    @patch('aem_admin_client.base.requests.Session.get')
-    def test_status_operation(self, mock_get):
+    @patch("aem_admin_client.base.requests.Session.request")
+    def test_status_operation(self, mock_request):
         """Test status operation."""
         # Mock response with proper headers
         mock_response = Mock()
@@ -57,10 +61,10 @@ class TestAEMAdminClient:
         mock_response.json.return_value = {
             "webPath": "/test",
             "resourcePath": "/test.md",
-            "live": {"status": 200, "url": "https://example.com/test"}
+            "live": {"status": 200, "url": "https://example.com/test"},
         }
         mock_response.content = b'{"test": "data"}'
-        mock_get.return_value = mock_response
+        mock_request.return_value = mock_response
 
         client = AEMAdminClient(auth_token="test-token")
         status = client.status.get_status("org", "site", "main", "test")
@@ -69,8 +73,14 @@ class TestAEMAdminClient:
         assert status.resource_path == "/test.md"
         assert status.live.status == 200
 
-    @patch('aem_admin_client.base.requests.Session.post')
-    def test_publish_operation(self, mock_post):
+        # Verify the mock was called with the correct path
+        mock_request.assert_called_once()
+        args, kwargs = mock_request.call_args
+        assert args[0] == "GET"
+        assert "/status/org/site/main/test" in args[1]
+
+    @patch("aem_admin_client.base.requests.Session.request")
+    def test_publish_operation(self, mock_request):
         """Test publish operation."""
         # Mock response with proper headers
         mock_response = Mock()
@@ -79,15 +89,21 @@ class TestAEMAdminClient:
         mock_response.headers = {"Content-Type": "application/json"}
         mock_response.json.return_value = {"status": "published"}
         mock_response.content = b'{"status": "published"}'
-        mock_post.return_value = mock_response
+        mock_request.return_value = mock_response
 
         client = AEMAdminClient(auth_token="test-token")
         result = client.publish.publish_resource("org", "site", "main", "test")
 
         assert result["status"] == "published"
 
-    @patch('aem_admin_client.base.requests.Session.get')
-    def test_authentication_error(self, mock_get):
+        # Verify the mock was called with the correct path
+        mock_request.assert_called_once()
+        args, kwargs = mock_request.call_args
+        assert args[0] == "POST"
+        assert "/live/org/site/main/test" in args[1]
+
+    @patch("aem_admin_client.base.requests.Session.request")
+    def test_authentication_error(self, mock_request):
         """Test authentication error handling."""
         # Mock 401 response with proper headers
         mock_response = Mock()
@@ -96,15 +112,21 @@ class TestAEMAdminClient:
         mock_response.headers = {"Content-Type": "application/json"}
         mock_response.json.return_value = {"error": "Unauthorized"}
         mock_response.content = b'{"error": "Unauthorized"}'
-        mock_get.return_value = mock_response
+        mock_request.return_value = mock_response
 
         client = AEMAdminClient(auth_token="invalid-token")
 
         with pytest.raises(AuthenticationError):
             client.status.get_status("org", "site", "main", "test")
 
-    @patch('aem_admin_client.base.requests.Session.get')
-    def test_validation_error(self, mock_get):
+        # Verify the mock was called with the correct path
+        mock_request.assert_called_once()
+        args, kwargs = mock_request.call_args
+        assert args[0] == "GET"
+        assert "/status/org/site/main/test" in args[1]
+
+    @patch("aem_admin_client.base.requests.Session.request")
+    def test_validation_error(self, mock_request):
         """Test validation error handling."""
         # Mock 400 response with proper headers
         mock_response = Mock()
@@ -113,12 +135,18 @@ class TestAEMAdminClient:
         mock_response.headers = {"Content-Type": "application/json"}
         mock_response.json.return_value = {"error": "Bad Request"}
         mock_response.content = b'{"error": "Bad Request"}'
-        mock_get.return_value = mock_response
+        mock_request.return_value = mock_response
 
         client = AEMAdminClient(auth_token="test-token")
 
         with pytest.raises(ValidationError):
             client.status.get_status("org", "site", "main", "test")
+
+        # Verify the mock was called with the correct path
+        mock_request.assert_called_once()
+        args, kwargs = mock_request.call_args
+        assert args[0] == "GET"
+        assert "/status/org/site/main/test" in args[1]
 
 
 if __name__ == "__main__":

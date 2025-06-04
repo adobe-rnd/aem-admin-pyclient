@@ -1,6 +1,7 @@
 """Code operations for AEM Admin API."""
 
-from typing import Optional, Dict, Any
+from typing import Any, Dict
+
 from ..base import BaseClient
 from ..models import CodeInfo
 

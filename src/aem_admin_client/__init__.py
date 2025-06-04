@@ -12,18 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-AEM Admin Python Client - A comprehensive Python client library for the AEM Admin API.
-"""
+"""A comprehensive Python client library for the AEM Admin API."""
 
 from .client import AEMAdminClient
 from .config import Config, get_client_from_env
 from .exceptions import (
     AEMAdminError,
     AuthenticationError,
+    AuthorizationError,
+    ConflictError,
     NotFoundError,
     RateLimitError,
     ServerError,
+    ValidationError,
 )
 
 __version__ = "12.74.3"
@@ -33,7 +34,10 @@ __all__ = [
     "get_client_from_env",
     "AEMAdminError",
     "AuthenticationError",
+    "AuthorizationError",
+    "ConflictError",
     "NotFoundError",
     "RateLimitError",
     "ServerError",
+    "ValidationError",
 ]

@@ -1,8 +1,9 @@
 """Publish operations for AEM Admin API."""
 
-from typing import Optional, List, Dict, Any
+from typing import Any, Dict, List, Optional
+
 from ..base import BaseClient
-from ..models import LiveInfo, PublishRequest, JobResponse
+from ..models import JobResponse, LiveInfo, PublishRequest
 
 
 class PublishOperations:
@@ -117,8 +118,7 @@ class PublishOperations:
         api_path = f"/live/{org}/{site}/{ref}/*"
 
         response_data = self.client.post(
-            api_path,
-            data=request.dict(by_alias=True, exclude_none=True)
+            api_path, data=request.dict(by_alias=True, exclude_none=True)
         )
         return JobResponse(**response_data)
 
@@ -142,6 +142,86 @@ class PublishOperations:
         """
         api_path = f"/live/{org}/{site}/{ref}/*"
 
-        request_data = {"paths": paths}
-        response_data = self.client.delete(api_path, data=request_data)
+        # Convert paths to query parameters instead of request body
+        params = {"path": paths} if paths else None
+        response_data = self.client.delete(api_path, params=params)
         return JobResponse(**response_data)
+
+    def get_status(self, org: str, site: str) -> Dict[str, Any]:
+        """Get publish status.
+
+        Args:
+            org: Organization name
+            site: Site name
+
+        Returns:
+            Publish status response
+        """
+        path = (
+            f"/publish/{self.client._encode_path_param(org)}/"
+            f"{self.client._encode_path_param(site)}/status"
+        )
+        return self.client.get(path)
+
+    def trigger_publish(
+        self,
+        org: str,
+        site: str,
+        branch: Optional[str] = None,
+        commit: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Trigger publish.
+
+        Args:
+            org: Organization name
+            site: Site name
+            branch: Branch name
+            commit: Commit hash
+
+        Returns:
+            Publish trigger response
+        """
+        path = (
+            f"/publish/{self.client._encode_path_param(org)}/"
+            f"{self.client._encode_path_param(site)}"
+        )
+
+        data = {}
+        if branch:
+            data["branch"] = branch
+        if commit:
+            data["commit"] = commit
+
+        return self.client.post(path, data=data)
+
+    def cancel_publish(self, org: str, site: str) -> Dict[str, Any]:
+        """Cancel publish.
+
+        Args:
+            org: Organization name
+            site: Site name
+
+        Returns:
+            Publish cancel response
+        """
+        path = (
+            f"/publish/{self.client._encode_path_param(org)}/"
+            f"{self.client._encode_path_param(site)}"
+        )
+        return self.client.delete(path)
+
+    def trigger_publish_all(self) -> Dict[str, Any]:
+        """Trigger publish for all sites.
+
+        Returns:
+            Publish all trigger response
+        """
+        return self.client.post("/publish")
+
+    def cancel_publish_all(self) -> Dict[str, Any]:
+        """Cancel publish for all sites.
+
+        Returns:
+            Publish all cancel response
+        """
+        return self.client.delete("/publish")
